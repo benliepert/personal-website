@@ -11,18 +11,19 @@ li {
   
 li a {
     display: block;
-    color: black;
+    color: #151515;
     font-size: 30px;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
     margin-right: 0px;
     margin-left:69px;
+
 }
   
   /* Change the link color to #111 (black) on hover */
 li a:hover {
-    background-color: #f3f3f3ec;
+    background-color: white;
 }
 
 hr {
@@ -44,15 +45,21 @@ body {
     position:fixed;
 	top:0;
     left:20;
-    height: 70px;
-    width: 70px;
-    padding-top: 10px;
+    height: 65px;
+    width: 65px;
+    padding-top: 16px;
 }
 
 .avatar {
-    
+    height: 474px;
+    width: 474px;
     margin-top:69px;
     float: right;
+}
+
+h1 {
+    font-size: 64px;
+    font-weight: normal;
 }
 
 
