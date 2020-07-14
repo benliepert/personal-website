@@ -1,0 +1,58 @@
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+  
+li {
+    float: right;
+}
+  
+li a {
+    display: block;
+    color: black;
+    font-size: 30px;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    margin-right: 0px;
+    margin-left:69px;
+}
+  
+  /* Change the link color to #111 (black) on hover */
+li a:hover {
+    background-color: #f3f3f3ec;
+}
+
+hr {
+    height: 4px;
+    background-color: black;
+    border: none;
+}
+
+body {
+    font-size: 30px;
+    font-family: Oswald;
+    padding-right: 104px;
+    padding-left: 104px;
+    padding-top: 0px;
+    
+}
+
+.top-left-img {
+    position:fixed;
+	top:0;
+    left:20;
+    height: 70px;
+    width: 70px;
+    padding-top: 10px;
+}
+
+.avatar {
+    
+    margin-top:69px;
+    float: right;
+}
+
+
