@@ -61,5 +61,10 @@ h1 {
     font-size: 64px;
     font-weight: normal;
 }
-
+footer {
+    clear: both;
+    position: relative;
+    height: 200px;
+    margin-top: -200px;
+}
 
