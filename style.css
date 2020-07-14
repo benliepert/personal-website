@@ -35,14 +35,14 @@ hr {
 body {
     font-size: 30px;
     font-family: Oswald;
-    padding-right: 104px;
-    padding-left: 104px;
+    padding-right: 600px;
+    padding-left: 600px;
     padding-top: 0px;
     
 }
 
 .top-left-img {
-    position:fixed;
+   position:fixed;
 	top:0;
     left:20;
     height: 65px;
