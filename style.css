@@ -5,7 +5,16 @@ body {
     
     
 }
-
+.arrow-down {
+    text-align: center;
+    width: 46px;
+    height: 100%;
+    padding-top: 81px;
+    padding-bottom: 307px;
+}
+.about  {
+    padding-top: 327px;
+}
 a {
     color: #325FC9;
     text-decoration: none;
