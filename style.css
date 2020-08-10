@@ -32,6 +32,7 @@
     }
     .about  {
         padding-top: 327px;
+        
     }
     a {
         color: #325FC9;
@@ -51,7 +52,7 @@
     }
     
     div.articles {
-        padding-top: 650px;
+        padding-top: 250px;
         text-align: left;
         padding-left: 8px;
         padding-right: 8px;
@@ -71,11 +72,102 @@
     }
     
     .contact {
-        padding-top: 727px;
-        padding-bottom: 351px;
+        padding-top: 427px;
+        padding-bottom: 391px;
     }
     
     
     
   }
 
+  @media screen and (min-width: 650px){
+
+    body {
+        color: #3C3C3C;
+        font-family: Helvetica;
+        text-align: center;
+        
+        
+    }
+    .boxing {
+        color: white;
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        background-image: linear-gradient(to bottom right, rgb(53, 216, 238), rgb(23, 201, 255));
+        border-radius: 6px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        
+        width: 25%;
+        
+        
+        
+    }
+    .div {
+        padding-top: 32px;
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+
+    }
+    .arrow-down {
+        text-align: center;
+        width: 46px;
+        height: 100%;
+        padding-top: 81px;
+        padding-bottom: 307px;
+    }
+    .about  {
+        padding-top: 327px;
+    }
+    a {
+        color: #325FC9;
+        text-decoration: none;
+    }
+    
+    a:hover {
+        text-decoration: underline;
+    }
+    
+    div.projects {
+        padding-left: 8px;
+        padding-top: 41px;
+        text-align: left;
+        padding-right: 8px;
+        
+    }
+    .title {
+        text-align: center;
+    }
+    div.articles {
+        padding-top: 250px;
+        text-align: left;
+        padding-left: 8px;
+        padding-right: 8px;
+       
+    }
+    
+    .article-spacing {
+        
+        
+        margin-bottom: 15px;
+    }
+    
+    img {   
+        width: 46px;
+        height: 46px;
+        text-align: center;    
+        
+    }
+    
+    .contact {
+        padding-top: 427px;
+        padding-bottom: 391px;
+        
+    }
+    
+    
+    
+  }
