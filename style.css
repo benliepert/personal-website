@@ -1,0 +1,37 @@
+body {
+    color: #3C3C3C;
+    font-family: Helvetica;
+    text-align: center;
+}
+
+a {
+    color: #325FC9;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+li {
+    list-style-type: none;
+}
+
+ul > li {
+    
+    padding: 15px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    color: white;
+    background-color: #3C3C3C;
+    text-align: left;
+}
+
+.projects {
+    text-align: left;
+}
+
+.articles {
+    text-align: left;
+    
+}
