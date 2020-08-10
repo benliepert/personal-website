@@ -1,60 +1,94 @@
-body {
-    color: #3C3C3C;
-    font-family: Helvetica;
-    text-align: center;
+
+
+@media screen and (max-width: 650px){
+
+    body {
+        color: #3C3C3C;
+        font-family: Helvetica;
+        text-align: center;
+        
+        
+    }
+    .boxing {
+        color: white;
+        padding: 15px;
+        background-color: #3c3c3c;
+        border-radius: 6px;
+        margin-top: 29px;
+        margin-bottom: 29px;
+    }
+    .div {
+        padding-top: 32px;
+    }
+    .arrow-down {
+        text-align: center;
+        width: 46px;
+        height: 100%;
+        padding-top: 81px;
+        padding-bottom: 307px;
+    }
+    .about  {
+        padding-top: 327px;
+    }
+    a {
+        color: #325FC9;
+        text-decoration: none;
+    }
+    
+    a:hover {
+        text-decoration: underline;
+    }
+    
+    li {
+        
+        list-style-type: none;
+    }
+    
+    ul.projects-box > li {
+        
+        
+       
+        color: white;
+        background-color: #3C3C3C;
+        text-align: left;
+       
+        
+    }
+    
+    div.projects {
+        padding-left: 32px;
+        padding-top: 41px;
+        text-align: left;
+        padding-right: 32px;
+        
+    }
+    
+    div.articles {
+        padding-top: 247px;
+        text-align: left;
+        padding-left: 32px;
+        padding-right: 32px;
+       
+    }
+    
+    .article-spacing {
+        
+        
+        margin-bottom: 48px;
+    }
+    
+    img {   
+        width: 46px;
+        height: 46px;
+        text-align: center;    
+    }
+    
+    .contact {
+        padding-top: 527px;
+        padding-bottom: 351px;
+    }
     
     
-}
-.arrow-down {
-    text-align: center;
-    width: 46px;
-    height: 100%;
-    padding-top: 81px;
-    padding-bottom: 307px;
-}
-.about  {
-    padding-top: 327px;
-}
-a {
-    color: #325FC9;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-li {
     
-    list-style-type: none;
-}
-
-ul.projects-box > li {
-    
-    
-   
-    color: white;
-    background-color: #3C3C3C;
-    text-align: left;
-   
-    
-}
-
-.projects {
-    text-align: left;
-    
-}
-
-.articles {
-    text-align: left;
-   
-}
-
-img {   
-    width: 46px;
-    height: 46px;
-    text-align: center;    
-}
-
-
+  }
 
