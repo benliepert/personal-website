@@ -6,33 +6,29 @@
         color: #3C3C3C;
         font-family: Helvetica;
         text-align: center;
-        
-        
     }
+
     ul {
         list-style: none;
         padding-left: 5%;
         padding-right: 5%;
-        
     }
+
     h2 a {
         margin-top: 0;
         padding-top: 0;
         font-size: 16px;
         word-break: break-all;
     }
+
     li {
-        
-        
         display: flex;
         flex-direction: column;
         list-style-type: none;
         align-items: baseline;
         justify-content: left;
         border-bottom: 4px dotted #e6e6e6;
-        position: relative;
-        
-        
+        position: relative;   
     }
 
     h3 {
@@ -43,33 +39,13 @@
         font-size: 11px;
         white-space: nowrap;
     }
-    .boxing {
-        color: white;
-        padding-left: 15px;
-        padding-right: 15px;
-        padding-top: 1px;
-        padding-bottom: 1px;
-        background-image: linear-gradient(to bottom right, #325FC9, #325FC7);
-        opacity: 0.7;
-        border-radius: 6px;
-        margin-top: 15px;
-        margin-bottom: 15px;
-    }
-    .div {
-        padding-top: 32px;
-    }
-    .arrow-down {
-        text-align: center;
-        width: 46px;
-        height: 100%;
-        padding-top: 81px;
-        padding-bottom: 50px;
-    }
+
     .about  {
         padding-top: 50px;
         padding-bottom: 50px;
         
     }
+
     a {
         color: #325FC9;
         text-decoration: none;
@@ -78,27 +54,9 @@
     a:hover {
         text-decoration: underline;
     }
-    
-    div.projects {
-        padding-left: 8px;
-        padding-top: 41px;
-        text-align: left;
-        padding-right: 8px;
-        
-    }
-    
-    div.articles {
-        padding-top: 50px;
-        text-align: left;
-        padding-left: 8px;
-        padding-right: 8px;
-       
-    }
-    
-    .article-spacing {
-        
-        
-        margin-bottom: 15px;
+
+    a.img-link:hover {
+        text-decoration: none;
     }
     
     img {   
@@ -111,11 +69,6 @@
         padding-top: 100px;
         padding-bottom: 100px;
     }
-    .boxing:hover {
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-        text-decoration: underline;
-    }
-    
     
   }
 
@@ -125,10 +78,8 @@
         color: #3C3C3C;
         font-family: Helvetica;
         text-align: center;
-        
-        
-        
     }
+
     h2 a {
         font-size: 16px;
         white-space: nowrap;
@@ -150,23 +101,17 @@
         max-width: 600px;
         margin: 50px auto;
         padding: 0 30px 50px 0;
-        
         position: relative;
     }
 
-    li {
-        
+    li { 
         position: relative;
         display: flex;
         list-style-type: none;
         align-items: baseline;
         justify-content: left;
         border-bottom: 4px dotted #e6e6e6;
-        
-        
-    }
-
-    
+    } 
 
     h3 {
         margin-right: 25px;
@@ -174,98 +119,34 @@
         font-size: 11px;
         white-space: nowrap;
     }
-    .boxing {
-        color: white;
-        padding-left: 15px;
-        padding-right: 15px;
-        padding-top: 1px;
-        padding-bottom: 1px;
-        background-image: linear-gradient(to bottom right, #325FC9, #325FC7);
-        opacity: 0.7;
-        border-radius: 6px;
-        margin-top: 15px;
-        margin-bottom: 15px;
-        margin: 5px;
-        width: 33%;
-        
-        
-        
-    }
 
-    .boxing:hover {
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    }
-    .div {
-        padding-top: 32px;
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-
-    }
-    .arrow-down {
-        text-align: center;
-        width: 46px;
-        height: 100%;
-        padding-top: 81px;
-        padding-bottom: 50px;
-    }
     .about  {
         padding-top: 50px;
         padding-bottom: 50px;
     }
+
     a {
         color: #325FC9;
         text-decoration: none;
     }
    
     a:hover {
-        text-decoration: underline;
-        
-    }
-    
-    .sub {
-        display: flex;
-        align-items: center;
-        flex-direction: column;
+        text-decoration: underline; 
     }
 
-    div.projects {
-        padding-left: 8px;
-        padding-top: 41px;
-        text-align: left;
-        padding-right: 8px;
-        
+    a.img-link:hover {
+        text-decoration: none;
     }
-    .title {
-        text-align: center;
-    }
-    div.articles {
-        padding-top: 50px;
-        text-align: left;
-        padding-left: 8px;
-        padding-right: 8px;
-       
-    }
-    
-    .article-spacing {
-        
-        margin: 20px;
-        margin-bottom: 15px;
-    }
-    
+
     img {   
         width: 46px;
         height: 46px;
         text-align: center;    
-        
     }
     
     .contact {
         padding-top: 50px;
-        padding-bottom: 100px;
-        
+        padding-bottom: 100px;  
     }
-    
-    
     
   }
