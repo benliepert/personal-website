@@ -1,54 +1,60 @@
-body {
-    color: #3C3C3C;
-    font-family: Helvetica;
-    margin-left: 28%;
-    font-size: 24px;
+@media screen and (min-width: 421px){
+
+    body {
+        color: #3C3C3C;
+        font-family: Helvetica;
+        margin-left: 28%;
+        font-size: 24px;
+    }
+
+    a {
+      color: #325FC9;
+       text-decoration: none;
+    }
+
+    div {
+        margin: 8%;
+        margin-top: 40px;
+        display: flex;
+       flex-direction: column;
+        align-content: center;
+       align-items: flex-start;
+       justify-content: space-around;
+    }
+
+    a:hover {
+       text-decoration: underline;
+    }
+
+    .arrow {
+        transform: rotate(90deg);
+        width: 40px;
+        height: 40px;
+        float:left;
+        position: relative;
+        top: 5px;
+    }
+
+    h1 {
+        margin-top: 4%;
+        margin-left: 8%;
+        margin-bottom: 40px;     
+    }
+
+    p {
+        display: inline; /* the default for span */
+        width: 500px;
+        height: 100px;
+    }   
+
 }
 
-a {
-    color: #325FC9;
-    text-decoration: none;
-}
+@media screen and (max-width: 420px){
+      h1 {
+          color: red;
+      }
 
-div {
-    margin: 8%;
-    margin-top: 40px;
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    align-items: flex-start;
-    justify-content: space-around;
-    
-    
-}
-a:hover {
-    text-decoration: underline;
-}
-
-.arrow {
-
-    transform: rotate(90deg);
-    width: 40px;
-    height: 40px;
-    float:left;
-    position: relative;
-    top: 5px;
-
-    
-
-}
-
-h1 {
-    margin-top: 4%;
-    margin-left: 8%;
-    margin-bottom: 40px; 
-     
-}
-
-
-
-p {
-    display: inline; /* the default for span */
-  width: 500px;
-  height: 100px;
+      .arrow {
+          display: none;
+      }
 }
