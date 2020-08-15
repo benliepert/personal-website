@@ -70,9 +70,9 @@
         padding-bottom: 50px;
     }
     
-  }
+}
 
-  @media screen and (min-width: 421px){
+@media screen and (min-width: 421px){
 
     body {
         color: #3C3C3C;
@@ -149,4 +149,4 @@
         padding-bottom: 50px;  
     }
     
-  }
+}

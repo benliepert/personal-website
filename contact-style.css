@@ -1,10 +1,8 @@
 body {
-    font-family: helvetica;
-    font-size: 24px;
     color: #3C3C3C;
-    margin-left: 38%;
-
-    
+    font-family: Helvetica;
+    text-align: block;
+    font-size: 21px;
 }
 
 a {
@@ -12,36 +10,27 @@ a {
     text-decoration: none;
 }
 
-.arrow {
-    transform: rotate(90deg);
-    width: 40px;
-    height: 40px;
-    float:left;
-    position: relative;
-    top: 5px;
-}
-
 a:hover {
-    text-decoration: underline; 
-}   
-
-h1 {
-    margin-top: 4%;
-    margin-left: 8%;
-    margin-bottom: 0px;     
+    text-decoration: underline;
 }
+
+
 
 div {
-    margin: 8%;
-    margin-top: 40px;
-    display: flex;
-   flex-direction: column;
-    align-content: center;
-   align-items: flex-start;
-   justify-content: space-around;
+    list-style-type:none;
+    padding: 0;
+    padding-top: 4px;
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 40px;
 }
 
-p {
-    margin-top: 0;
-    padding-top: 0;
+main {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 0 30px 50px 0;
+    position: relative;
 }

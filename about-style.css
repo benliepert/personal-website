@@ -1,101 +1,36 @@
-@media screen and (min-width: 421px){
-
-    body {
-        color: #3C3C3C;
-        font-family: Helvetica;
-        margin-left: 32%;
-        font-size: 24px;
-    }
-
-    a {
-      color: #325FC9;
-       text-decoration: none;
-    }
-
-    div {
-        margin: 8%;
-        margin-top: 40px;
-        display: flex;
-       flex-direction: column;
-        align-content: center;
-       align-items: flex-start;
-       justify-content: space-around;
-    }
-
-    a:hover {
-       text-decoration: underline;
-    }
-
-    .arrow {
-        transform: rotate(90deg);
-        width: 40px;
-        height: 40px;
-        float:left;
-        position: relative;
-        top: 5px;
-    }
-
-    h1 {
-        margin-top: 4%;
-        margin-left: 8%;
-        margin-bottom: 40px;     
-    }
-
-    p {
-        display: inline; /* the default for span */
-        width: 500px;
-        height: 100px;
-    }   
-
+body {
+    color: #3C3C3C;
+    font-family: Helvetica;
+    text-align: block;
+    font-size: 21px;
 }
 
-@media screen and (max-width: 420px){
-    
-    body {
-        color: #3C3C3C;
-        font-family: Helvetica;
-        font-size: 24px;
-        
-    }
+a {
+    color: #325FC9;
+    text-decoration: none;
+}
 
-    a {
-        color: #325FC9;
-        text-decoration: none;
-    }
+a:hover {
+    text-decoration: underline;
+}
 
-    div {
-        margin: 0;
-        margin-top: 40px;
-        display: flex;
-        flex-direction: column;
-        align-content: center;
-        align-items: flex-start;
-        justify-content: space-around;
-    }
 
-    a:hover {
-        text-decoration: underline;
-    }
 
-    .arrow {
-        display: none;
-        transform: rotate(90deg);
-        width: 40px;
-        height: 40px;
-        float:left;
-        position: relative;
-        top: 5px;
-    }
+div {
+    list-style-type:none;
+    padding: 0;
+    padding-top: 4px;
+    display: block;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 40px;
+}
 
-    h1 {
-        margin-top: 4%;
-        margin-left: 0;
-        margin-bottom: 40px;     
-    }
-
-    p {
-        display: inline; /* the default for span */
-        width: 500px;
-        height: 100px;
-    }   
+main {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 0 30px 50px 0;
+    position: relative;
 }
