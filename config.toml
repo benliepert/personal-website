@@ -1,6 +1,6 @@
 baseURL = "https://jakobwaibel.com/"
 languageCode = "en-us"
-title = "Jakob Waibel's personal site"
+title = "Jakob Waibel's home on the internet"
 
 [permalinks]
 blog = "/:year/:month/:day/:filename/"
