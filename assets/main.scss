@@ -19,7 +19,6 @@ body {
 }
 
 .index {
-
     display: flex;
     justify-content: space-between;
 
@@ -66,8 +65,8 @@ body {
         }
 
         li {
-            margin-top: .2rem;
-            margin-bottom: .2rem;
+            margin-top: 0.2rem;
+            margin-bottom: 0.2rem;
         }
 
         margin-right: 1rem;
@@ -98,5 +97,17 @@ footer {
 @media (max-width: 640px) {
     footer {
         display: none;
+    }
+}
+
+.back-home {
+    margin-top: 2rem;
+
+    a {
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
     }
 }
