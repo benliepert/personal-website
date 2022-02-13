@@ -1,5 +1,38 @@
-{{ define "main" }}
-	<div class="hero">
-	    <h1 class="hero__header dark-orange">Jakob Waibel's personal site</h1>
-	</div>
-{{ end }}
+{{ partial "head.html" . }}
+
+<main class="index">
+  <aside>
+    <img src="https://avatars.githubusercontent.com/u/59575534?v=4"
+      alt="My avatar: an astronaut in a spacesuit with a school of fish and the moon visible in the reflection on their visor"
+      width="296" height="296" />
+    <h1>
+      Jakob Waibel
+    </h1>
+    <p>
+      JakWai01
+    </p>
+    <small>
+      Linux, Go, Python Developer - Computer Science and Media - he/him
+    </small>
+    <ul class="external-links">
+      <li>{{ partial "fontawesome.html" "github" }}<a href="https://github.com/JakWai01">JakWai01</a></li>
+      <li>{{ partial "fontawesome.html" "twitter" }}<a href="https://twitter.com/jakobwaibel">@jakobwaibel</a></li>
+      <li>{{ partial "fontawesome.html" "paper-plane-solid" }}<a
+          href="mailto:mail@jakobwaibel.com">mail@jakobwaibel.com</a></li>
+      <li>{{ partial "fontawesome.html" "paste-solid" }}<a href="">Curriculum Vitae</a></li>
+    </ul>
+  </aside>
+  <section class="article-list">
+    {{ range (.Site.GetPage "section" "blog").Pages }}
+    <div class="article">
+      <a class="preview-title" href="{{ .Permalink }}">{{ .Title }}</a>
+      <span>{{ .Date.Format "January 2, 2006" }}</span>
+    </div>
+    {{ end }}
+  </section>
+
+
+
+</main>
+
+</html>
