@@ -10,7 +10,11 @@
       <div class="article">
         <span>{{ .Date.Format "January 2, 2006" }}</span>
         <div>
-          <a class="preview-title" href="{{ .Permalink }}">{{ .Title }}</a>
+          {{ if isset .Params "external_url" }}
+            <a href="{{ .Params.external_url }}">{{ .Title }}</a><span>&#8599;</span>
+          {{else}}
+            <a class="preview-title" href="{{ .Permalink }}">{{ .Title }}</a>
+          {{ end }}
         </div>
       </div>
       {{ end }}
