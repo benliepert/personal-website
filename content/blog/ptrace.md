@@ -10,7 +10,7 @@ A while ago, I was desperately searching for resources on how to use ptrace in R
 
 The ptrace man page provides a solid definition: "The ptrace() system call provides a means by which one process (the "traceer") may observe or control the execution of another process (the "tracee"), and examine and change the tracee's memory and registers. It is primarily used to implement breakpoint debugging and system call tracing.
 
-In other words: ptrace() allows us to interact with a process to allow us to set breakpoints to e.g. build a debugger (Yes, this is how gdb works) or to trace system calls (e.g. strace). 
+In other words: ptrace() allows us to interact with a process to set breakpoints to e.g. build a debugger (Yes, this is how gdb works) or to trace system calls (e.g. strace).
 
 We can trace a process by making the calling process (e.g. our strace implementation) the parent process of the process we want to trace and then ptrace() allows us to see what our child process is doing.
 
@@ -20,78 +20,157 @@ In this article, we will utilize ptrace() to build our own strace implementation
 
 # Tracing system calls using ptrace
 
-Generally, there are two approaches to trace system calls. Either we can attach to a running process or execute a command like `ls` in a process we created by forking our process. Let's have a look at a simple example: 
+Generally, there are two approaches to trace system calls. Either we can attach to a running process or execute a command like `ls` in a process we created by forking our process. 
 
-```
-Hello, World!
+First let's have a look on how to fork a process to create a child process:
+
+```Rust
+use nix::unistd::{fork, ForkResult};
+
+fn main() {
+    match unsafe { fork() } {
+        Ok(ForkResult::Child) => {
+            loop{}
+        } 
+
+        Ok(ForkResult::Parent { child: _ }) => {
+            loop{}
+        }
+
+        Err(err) => {
+            panic!("[main] fork() failed: {}", err);
+        }
+    }
+}
 ```
 
-In the code snippet, we simply **fork** the calling process. **Forking** a process essentially just means that we are creating a new process by duplicating the calling process. One of the two processes will later be used as the "tracer" and the other one will become the "tracee".
+In the code snippet, we simply **fork** the calling process by calling the respective function. **Forking** a process essentially just means that we are creating a new process by duplicating the calling process. The `Parent` will be our calling process (tracer) and the `Child` will execute the command we want to trace (tracee).
 
-```
-strace
+We can see that our process now consists out of two processes by using `top`:
+
+```bash
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND          
+  33778 jakob     20   0    3216   1008    896 R 100,0   0,0   0:12.98 ptrace           
+  33803 jakob     20   0    3216    120      0 R 100,0   0,0   0:12.90 ptrace           
+  24485 jakob     20   0  108,8g 485760 136464 S  21,6   1,5  11:57.68 chrome           
+  25056 jakob     20   0   38,5g 254452 119724 S  19,3   0,8   2:30.57 codium           
+   1930 jakob      9 -11 3409248  32552  23388 S   6,6   0,1   9:55.65 pulseaudio       
+   2164 jakob     20   0 6941696 363176 176248 S   6,6   1,1  12:31.55 gnome-shell     
 ```
 
-When we use strace on our code snippet above, we can see that the last system call executed is `clone` which indicates that this process was split into two subprocesses. Let's have a look what our processes are!
+The first two processes in `top` are our two processes, both at 100% CPU usage. That's of course because both processes just consist out of an inifinte loop respectively.
 
-```
-Look what Pids we have
+We can also use `strace` to inspect what we have done:
+
+```bash
+$ strace cargo r
+[...]
+brk(NULL)                               = 0x559a6ac5f000
+brk(0x559a6ac80000)                     = 0x559a6ac80000
+openat(AT_FDCWD, "/proc/self/maps", O_RDONLY|O_CLOEXEC) = 3
+prlimit64(0, RLIMIT_STACK, NULL, {rlim_cur=8192*1024, rlim_max=RLIM64_INFINITY}) = 0
+newfstatat(3, "", {st_mode=S_IFREG|0444, st_size=0, ...}, AT_EMPTY_PATH) = 0
+read(3, "559a6a59e000-559a6a5a4000 r--p 0"..., 1024) = 1024
+read(3, "000 r--p 001bd000 103:02 2365710"..., 1024) = 1024
+read(3, "3a000-7fb34513c000 r--p 00000000"..., 1024) = 918
+close(3)                                = 0
+sched_getaffinity(34776, 32, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]) = 8
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7fb344edea50) = 34790
 ```
 
-We could now use the child process to run a command we want to trace. Mind that `Command.exec()` will continue in this process, while `Command.spawn()` would continue executing in some other process, which is not what we aim for.
+When we use strace on our code snippet above, we can see that the last system call executed is `clone`. Clone is defined as: "These system calls create a new ("child") process, in a manner
+similar to fork(2).". Exactly what we expected!
 
+We can now use the child process to run a command we want to trace. Mind that `Command.exec()` will continue in this process, while `Command.spawn()` would continue executing in some other process, which is not what we aim for.
+
+```Rust
+use nix::unistd::{fork, ForkResult, Pid};
+use std::os::unix::process::CommandExt;
+use std::process::Command;
+
+fn main() {
+    match unsafe { fork() } {
+        Ok(ForkResult::Child) => {
+            run_tracee();
+        } 
+
+        Ok(ForkResult::Parent { child }) => {
+            run_tracer(child);
+        }
+
+        Err(err) => {
+            panic!("[main] fork() failed: {}", err);
+        }
+    }
+}
+
+fn run_tracer(_child: Pid) {
+    loop{}
+}
+
+fn run_tracee() {
+    Command::new("ls").exec();
+}
 ```
-Implement Command.exec() and see that nothing but fork and execute ls in the child process.
+
+When executing this snippet, we can see that ls is executed successfully. Be aware that the code will not exit automatically since the parent is running the infinite loop:
+
+```bash
+$ cargo r
+   Compiling ptrace v0.1.0 (/home/jakob/Documents/Projects/ptrace)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.36s
+     Running `target/debug/ptrace`
+Cargo.lock  Cargo.toml  src  target
 ```
 
 Now we should have all we need to trace some syscalls. Let's start by only tracing the first syscall that occurs! 
 
 ```Rust
- mod system_call_names;
+mod system_call_names;
 
-        use linux_personality::personality;
-        use nix::sys::ptrace;
-        use nix::sys::wait::wait;
-        use nix::unistd::{fork, ForkResult, Pid};
-        use std::os::unix::process::CommandExt;
-        use std::process::{exit, Command};
+use linux_personality::personality;
+use nix::sys::ptrace;
+use nix::sys::wait::wait;
+use nix::unistd::{fork, ForkResult, Pid};
+use std::os::unix::process::CommandExt;
+use std::process::{exit, Command};
 
-        fn main() {
-            match unsafe { fork() } {
-                Ok(ForkResult::Child) => {
-                    run_tracee();
-                }
-
-                Ok(ForkResult::Parent { child }) => {
-                    run_tracer(child);
-                }
-
-                Err(err) => {
-                    panic!("[main] fork() failed: {}", err);
-                }
-            }
+fn main() {
+    match unsafe { fork() } {
+        Ok(ForkResult::Child) => {
+            run_tracee();
         }
 
-        fn run_tracer(child: Pid) {
-            wait().unwrap();
-
-            match ptrace::getregs(child) {
-                Ok(x) => println!(
-                    "Syscall number: {:?}",
-                    system_call_names::SYSTEM_CALL_NAMES[(x.orig_rax) as usize]
-                ),
-                Err(x) => println!("{:?}", x),
-            };
+        Ok(ForkResult::Parent { child }) => {
+            run_tracer(child);
         }
 
-        fn run_tracee() {
-            ptrace::traceme().unwrap();
-            personality(linux_personality::ADDR_NO_RANDOMIZE).unwrap();
-
-            Command::new("ls").exec();
-
-            exit(0)
+        Err(err) => {
+            panic!("[main] fork() failed: {}", err);
         }
+    }
+}
+
+fn run_tracer(child: Pid) {
+    wait().unwrap();
+
+    match ptrace::getregs(child) {
+        Ok(x) => println!(
+            "Syscall number: {:?}",
+            system_call_names::SYSTEM_CALL_NAMES[(x.orig_rax) as usize]
+        ),
+        Err(x) => println!("{:?}", x),
+    };
+}
+
+fn run_tracee() {
+    ptrace::traceme().unwrap();
+    personality(linux_personality::ADDR_NO_RANDOMIZE).unwrap();
+
+    Command::new("ls").exec();
+
+    exit(0)
+}
 ```
 
 Luckily, this code snippet is fairly simple. 
@@ -114,6 +193,18 @@ The **system call number** is stored in `orig_rax` and the **return value** is s
 **Important**: Each system call triggers wait() twice. Once before being executed and once after. This can be useful to either modify arguments before the system call is executed or see return values after the syscall was executed. 
 
 We then simply print the current system call. Mind that we only have the system call number by default. If we want to display the name. We need some sort of a list containing the system calls for your architecture. The list I used can be found [here](https://gist.github.com/JakWai01/55049889b3a697010480b794a24befee) (x86_64).
+
+Executing this snippet yields the following:
+
+```bash
+$ cargo r
+   Compiling ptrace v0.1.0 (/home/jakob/Documents/Projects/ptrace)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.38s
+     Running `target/debug/ptrace`
+Syscall number: "execve"
+```
+
+As we can see, the first syscall was `execve`. This is not surprising at all. It is defined like this: "execve() executes the program referred to by pathname". This syscall is actually responsible for executing the program itself.
 
 # Handling arguments of system calls
 
