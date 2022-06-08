@@ -2,7 +2,7 @@
 
 ## Overview 
 
-Jakob Waibel's personal website. 
+Jakob Waibel
 
 ## License
 
