@@ -303,8 +303,80 @@ That's it! We now have a very simple implementation of strace.
 After implementing the first approach to tracing system calls, the second one also isn't that different. 
 
 ```Rust
+mod system_call_names;
 
+use nix::sys::ptrace;
+use nix::sys::wait::wait;
+use nix::unistd::Pid;
+
+fn main() {
+    let pid = <PID_YOU_WANT_TO_TRACE>;
+
+    ptrace::attach(Pid::from_raw(pid))
+            .map_err(|e| format!("Failed to ptrace attach {} ({})", pid, e))
+            .unwrap();
+
+    run_tracer(Pid::from_raw(pid)) 
+}
+
+fn run_tracer(child: Pid) {
+    loop {
+        wait().unwrap();
+
+        match ptrace::getregs(child) {
+            Ok(x) => println!(
+                "Syscall number: {:?}",
+                system_call_names::SYSTEM_CALL_NAMES[(x.orig_rax) as usize]
+            ),
+            Err(_) => break,
+        };
+
+        match ptrace::syscall(child, None) {
+            Ok(_) => continue,
+            Err(_) => break,
+        }
+    }
+}
 ```
+
+In this code snippet, we essentially just use `ptrace::attach()` to attach to a currently running process. The PTRACE_TRACEME operation is included in the PTRACE_ATTACH operation. Then we call the tracer to wait for incoming system calls like before.
+
+If you want some dummy program you can trace I recommend just writing a loop in bash. It could e.g. look like this:
+
+```bash
+while :
+    do
+        sleep 1
+        echo hi
+    done
+```
+
+You can then use `top` to identify the `PID`. In my I had to look for `gnome-terminal-` in the `COMMAND` column.
+
+I also executed the binary this time, since I had to use sudo to get permissions to trace a running process.
+
+```bash
+$ sudo ./ptrace
+Syscall number: "poll"
+Syscall number: "restart_syscall"
+Syscall number: "restart_syscall"
+Syscall number: "clock_gettime"
+Syscall number: "clock_gettime"
+Syscall number: "recvmsg"
+Syscall number: "recvmsg"
+Syscall number: "write"
+Syscall number: "write"
+Syscall number: "write"
+Syscall number: "write"
+Syscall number: "write"
+Syscall number: "write"
+Syscall number: "clock_gettime"
+Syscall number: "clock_gettime"
+```
+
+This output is shortened again but we can actually see what our bash script is doing just from looking at the output of this command. 
+
+The power of strace!
 
 # Handling arguments of system calls
 
