@@ -16,9 +16,9 @@ The ptrace **man page** provides a solid definition of the system call:
 
 > The ptrace() system call provides a means by which one process (the "traceer") may observe or control the execution of another process (the "tracee"), and examine and change the tracee's memory and registers. It is primarily used to implement breakpoint debugging and system call tracing.
 
-In other, simpler words: `ptrace()` allows to interact with a process to set **breakpoints** for building debuggers like e.g. `gdb` or to **trace system calls** as done e.g. in `strace`. Both of these && are utilizing `ptrace()` to interact with a process.
+In other, simpler words: `ptrace()` allows to interact with a process to set **breakpoints** for building debuggers like e.g. `gdb` or to **trace system calls** as done in `strace`. Both of these approaches are utilizing `ptrace()` to interact with a process.
 
-A process can be traced by setting up the calling process (e.g. our strace implementation) to be the **parent process** of the process we want to trace (e.g. an execution of `ls`). `ptrace()` then allows to interact with the **child process**. When a certain event occurs, the child process is stopped using **SIGTRAP** until the parent process allows the child continue execution.
+A process can be traced by setting up the calling process (my strace implementation) to be the **parent process** of the process we want to trace (e.g. an execution of `ls`). `ptrace()` then allows to interact with the **child process**. When a certain event occurs, the child process is stopped using **SIGTRAP** until the parent process allows the child continue execution.
 
 For our purposes, we are going to use the `nix` crate to be able to use `ptrace()` in Rust. The `nix` crate generally provides various *nix system functions including `ptrace()`.
 
@@ -50,7 +50,7 @@ fn main() {
 }
 ```
 
-In the code snippet, I simply **fork** the calling process by calling the respective function. The `Parent` will be the calling process (tracer) and the `Child` will execute the command I want to trace (tracee). At this point, the parent and the child just run an infinite loop respectively.
+In the code snippet, I simply **fork** the calling process by calling the respective function. The `Parent` will be the calling process (tracer) and the `Child` will execute the command I want to trace (tracee). At this point, each the parent and the child just run an infinite loop.
 
 When using `top`, one can see that the process has been successfully forked: 
 
@@ -64,7 +64,7 @@ When using `top`, one can see that the process has been successfully forked:
    2164 jakob     20   0 6941696 363176 176248 S   6,6   1,1  12:31.55 gnome-shell     
 ```
 
-The first two processes in `top` are the processes resulting out of the fork, both at 100% CPU usage. That's of course because both processes consist out of an inifinte loop. If you aren't using infinite loops inside the first code snippet, look for `ptrace` in the `COMMAND` column.
+The first two processes in `top` are the processes resulting from the fork, both at 100% CPU usage. That's of course because both processes consist  of an inifinte loop. If you aren't using infinite loops inside the first code snippet, look for `ptrace` in the `COMMAND` column.
 
 Additionally, I can also use `strace` to trace the implementation to see that the fork worked:
 
@@ -186,7 +186,7 @@ fn run_tracee() {
 
 I will be using some of the functions Rust provides to interact with `ptrace()`. If you want to look at the original `ptrace()` specification to follow along, feel free to open up this [man page](https://linux.die.net/man/2/ptrace).
 
-The `tracee()` simply has to confirm that it indeed wants to be traced. This can be achieved by calling `ptrace::traceme().unwrap()`. If you are looking at the man page, search for `PTRACE_TRACEME`. Afterwards, we use personality to disable **ASLR** (Address Space Layout Randomization). Then we execute `ls`.
+The `tracee()` simply has to confirm that it indeed wants to be traced. This can be achieved by calling `ptrace::traceme().unwrap()`. If you are looking at the man page, search for `PTRACE_TRACEME`. Afterwards, we use `personality()` to disable **ASLR** (Address Space Layout Randomization). Then we execute `ls`.
 
 The `tracer()` waits for a syscall using `wait()`. This function uses `waitpid()` to wait for the child process to change state. Look at the corresponding [man page](https://linux.die.net/man/2/waitpid) for further details. As soon as we get notified, we call `getregs()` (`PTRACE_GETREGS`) to get information about the general purpose or floating point registers of the `tracee`. This struct includes the system call number, the arguments of the syscall and its return values. The **arguments** are stored in the following registers:
 
@@ -197,9 +197,9 @@ The `tracer()` waits for a syscall using `wait()`. This function uses `waitpid()
 5. `r8`
 6. `r9`
 
-The **system call number** is stored in `orig_rax` and the **return value** is stored in `rax` in the second invocation of the syscall. It is important to note that each system call triggers `wait()` twice. Once before being executed and once after. This can be useful to either modify arguments before the system call is executed or to get the return values after the syscall was executed. 
+The **system call number** is stored in `orig_rax`. The **return value** is stored in `rax` in the second invocation of the syscall. It is important to note that each system call triggers `wait()` twice. Once before being executed and once after. This can be useful to either modify arguments before the system call is executed or to get the return values after the syscall was executed. 
 
-So far, I don't care about the arguments. I just want to print out what system call was being used. Since we only get access to the **system call number**, we need some sort of a list containing the system calls for your architecture to be able to print the corresponding names. The list I used can be found [here](https://gist.github.com/JakWai01/55049889b3a697010480b794a24befee) (x86_64). The system call number corresponds with the index in the list. 
+So far, I don't care about the arguments. I just want to print out what system call was used. Since we only get access to the **system call number**, we need some sort of a list containing the system calls for your architecture to be able to print the corresponding names. The list I used can be found [here](https://gist.github.com/JakWai01/55049889b3a697010480b794a24befee) (`x86_64`). The system call number corresponds with the index in the list. 
 
 ```bash
 $ cargo r
@@ -347,7 +347,7 @@ while :
 
 `top` can then be used to identify the `PID` of the process to be traced. In my case I had to look for `gnome-terminal-` in the `COMMAND` column.
 
-I also executed the binary directly this time, since I had to use `sudo` to get permissions to trace a running process.
+I also executed the binary directly this time, since I had to use `sudo` to get permissions to trace a running process:
 
 ```bash
 $ sudo ./ptrace
@@ -374,7 +374,7 @@ The power of strace!
 
 # Handling arguments of system calls
 
-Accessing the arguments `ptrace()` provides us with is fairly straight forward. We have already used the return value of `ptrace::getregs()` to access the `system call number` earlier. This return value is actually the so-called `user_regs_struct`. In the following snippet, I am printing the corresponding `user_regs_struct` for every system call:
+Accessing the arguments `ptrace()` provides is fairly straight forward. We have already used the return value of `ptrace::getregs()` to access the `system call number` earlier. This return value is actually the so-called `user_regs_struct`. In the following snippet, I am printing the corresponding `user_regs_struct` for every system call:
 
 ```Rust
 mod system_call_names;
@@ -469,14 +469,14 @@ user_regs_struct {
 
 These arguments can then be accessed like the `orig_rax` field was already accessed before.
 
-The problem with these values is that we don't know what type they represent. The argument could e.g. be an integer, an address, a struct or a string. All of these types are represented as an integer in the register. We want to handle every type accordingly though. If the argument is a string, we want to print the string in human readable format. An address is just some number we want to display as hexadecimal later but we don't want to read the contents of.
+The problem with these values is that we don't know what type they represent. The argument could either be an integer, an address, a struct or a string. All of these types are represented as an integer in the registers. We want to handle every type accordingly. If the argument is a string, we want to print the string in human readable format. An address is just some number we want to display as hexadecimal later but we don't want to read the contents of.
 
-This problem had me struggling for several days. How can I figure out what number is an integer, an address or a string? The solution might be surprising. Surprisingly stupid. I just annotated the type of every argument in the system call list. I still do not know if there is a hacky solution which would have saved me all my efforts (and probably mistakes). If you know a better solution, please let me know. I was just happy to have a working solution to my problem. 
+This problem had me struggling for several days. How can I figure out what number is an integer, an address or a string? The solution might be surprising - surprisingly stupid. I just annotated the type of every argument in the system call list. I still do not know if there is a hacky solution which would have saved me all my efforts (and probably mistakes). If you know a better solution, please let me know. I was just happy to have a working solution to my problem.
 
 
 # Reading string arguments from memory
 
-As mentioned before, the different types have to be handled differently. Reading strings from memory can be fairly complicated. Below is a function written by the colleagues of the University of Pennsylvania. You can find it in this [repository](https://github.com/upenn-cis198/homework4). This function can be used to read a string from the address provided in the corresponding register. Be aware that this function will return jibberish when not actually reading a string.
+As mentioned before, the different types have to be handled differently. Reading strings from memory can be fairly complicated. Below one can see a function written by the colleagues of the University of Pennsylvania. You can find it in this [repository](https://github.com/upenn-cis198/homework4). This function can be used to read a string from the address provided in the corresponding register. Be aware that this function will return jibberish when not actually reading a string.
 
 ```Rust
 fn read_string(pid: Pid, address: AddressType) -> String {
@@ -516,4 +516,4 @@ fn read_string(pid: Pid, address: AddressType) -> String {
 
 # Conclusion
 
-I hope this blogpost was able to answer some of the most frequent questions around working with `ptrace()` in Rust. If you are interested on how to continue from here, consider taking a look at [lurk](https://github.com/JakWai01/lurk) or hit me up on [Twitter](https://twitter.com/jakobwaibel).
+I hope this blogpost answered some of the most frequent questions around working with `ptrace()` in Rust. If you are interested on how to continue from here, consider taking a look at [lurk](https://github.com/JakWai01/lurk) or hit me up on [Twitter](https://twitter.com/jakobwaibel).
