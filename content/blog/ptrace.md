@@ -1,7 +1,7 @@
 ---
-title: Rust systems programming - Implementing strace 
+title: Implementing strace in Rust 
 date: 2022-06-06T21:30:27+02:00
-draft: true
+draft: false
 ---
 
 While working on [lurk](https://github.com/JakWai01/lurk), I found it quite hard to find resources about working with `ptrace()` in Rust. 
