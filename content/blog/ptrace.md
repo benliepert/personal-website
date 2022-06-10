@@ -4,9 +4,9 @@ date: 2022-06-06T21:30:27+02:00
 draft: true
 ---
 
-While working on [lurk](https://github.com/JakWai01/lurk), I found it quite hard finding resources about working with `ptrace()` in Rust. 
+While working on [lurk](https://github.com/JakWai01/lurk), I found it quite hard to find resources about working with `ptrace()` in Rust. 
 
-There are some very helpful resources like this [blog](https://carstein.github.io/2022/05/29/rust-system-programming-2.html) by Michal Melewski or this [repository](https://github.com/upenn-cis198/homework4) by the University of Pennsylvania. The people behind these projects were super kind and open to answer questions. Still, I feel like there is a lack of resources about the topic. 
+There are some very helpful resources like this [blog post](https://carstein.github.io/2022/05/29/rust-system-programming-2.html) by Michal Melewski or this [repository](https://github.com/upenn-cis198/homework4) by the University of Pennsylvania. The people behind these projects were super kind and open to answer questions. Still, I feel like there is a lack of resources about the topic. 
 
 The goal of this article is to write a simple `strace` implementation in Rust using `ptrace()`. If you have any questions or feedback after reading the article, feel free to contact me on [Twitter](https://twitter.com/jakobwaibel).
 
@@ -14,15 +14,15 @@ The goal of this article is to write a simple `strace` implementation in Rust us
 
 The ptrace **man page** provides a solid definition of the system call: 
 
-> The ptrace() system call provides a means by which one process (the "traceer") may observe or control the execution of another process (the "tracee"), and examine and change the tracee's memory and registers. It is primarily used to implement breakpoint debugging and system call tracing.
+> The ptrace() system call provides a means by which one process (the "tracer") may observe or control the execution of another process (the "tracee"), and examine and change the tracee's memory and registers. It is primarily used to implement breakpoint debugging and system call tracing.
 
 In other, simpler words: `ptrace()` allows to interact with a process to set **breakpoints** for building debuggers like e.g. `gdb` or to **trace system calls** as done in `strace`. Both of these approaches are utilizing `ptrace()` to interact with a process.
 
 A process can be traced by setting up the calling process (my strace implementation) to be the **parent process** of the process we want to trace (e.g. an execution of `ls`). `ptrace()` then allows to interact with the **child process**. When a certain event occurs, the child process is stopped using **SIGTRAP** until the parent process allows the child continue execution.
 
-For our purposes, we are going to use the `nix` crate to be able to use `ptrace()` in Rust. The `nix` crate generally provides various *nix system functions including `ptrace()`.
+For our purposes, we are going to use the `nix` crate to be able to use `ptrace()` in Rust. The `nix` crate generally provides various \*nix system functions including `ptrace()`.
 
-Like mentioned earlier, I am going to build a simple `strace` implementation in this article. If you are rather interested in building a debugger, I suggest you to read Michal Melewski's [blog](https://carstein.github.io/2022/05/29/rust-system-programming-2.html) instead.
+As mentioned above, I am going to build a simple `strace` implementation in this article. If you are interested in building a debugger instead, I suggest you read Michal Melewski's [blog post](https://carstein.github.io/2022/05/29/rust-system-programming-2.html).
 
 # Tracing system calls by forking the calling process 
 
@@ -184,9 +184,9 @@ fn run_tracee() {
 }
 ```
 
-I will be using some of the functions Rust provides to interact with `ptrace()`. If you want to look at the original `ptrace()` specification to follow along, feel free to open up this [man page](https://linux.die.net/man/2/ptrace).
+I will be using some of the functions Rust provides to interact with `ptrace()`. If you want to look at the original `ptrace()` specification to follow along, feel free to open up the relevant [man page](https://linux.die.net/man/2/ptrace).
 
-The `tracee()` simply has to confirm that it indeed wants to be traced. This can be achieved by calling `ptrace::traceme().unwrap()`. If you are looking at the man page, search for `PTRACE_TRACEME`. Afterwards, we use `personality()` to disable **ASLR** (Address Space Layout Randomization). Then we execute `ls`.
+The `tracee()` has to confirm that it wants to be traced. This can be achieved by calling `ptrace::traceme().unwrap()`. If you are looking at the man page, search for `PTRACE_TRACEME`. Afterwards, we use `personality()` to disable **ASLR** (Address Space Layout Randomization). Then we execute `ls`.
 
 The `tracer()` waits for a syscall using `wait()`. This function uses `waitpid()` to wait for the child process to change state. Look at the corresponding [man page](https://linux.die.net/man/2/waitpid) for further details. As soon as we get notified, we call `getregs()` (`PTRACE_GETREGS`) to get information about the general purpose or floating point registers of the `tracee`. This struct includes the system call number, the arguments of the syscall and its return values. The **arguments** are stored in the following registers:
 
