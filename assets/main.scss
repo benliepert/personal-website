@@ -74,9 +74,7 @@ body {
     }
 
     @media (max-width: 640px) {
-        aside {
-            display: none;
-        }
+        flex-direction: column;
     }
 
     section {
@@ -98,12 +96,6 @@ footer {
 
     a:hover {
         text-decoration: underline;
-    }
-}
-
-@media (max-width: 640px) {
-    footer {
-        display: none;
     }
 }
 
