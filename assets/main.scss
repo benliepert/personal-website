@@ -74,9 +74,7 @@ body {
     }
 
     @media (max-width: 640px) {
-        aside {
-            display: none;
-        }
+        flex-direction: column;
     }
 
     section {
@@ -101,12 +99,6 @@ footer {
     }
 }
 
-@media (max-width: 640px) {
-    footer {
-        display: none;
-    }
-}
-
 .back-home {
     margin-top: 2rem;
 
@@ -117,4 +109,8 @@ footer {
     a:hover {
         text-decoration: underline;
     }
+}
+
+.highlight > pre {
+    overflow-x: auto;
 }

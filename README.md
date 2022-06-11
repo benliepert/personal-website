@@ -1,8 +1,8 @@
 # personal-website
 
-## Overview 
+## Overview
 
-Jakob Waibel
+My personal website built with HUGO.
 
 ## License
 
