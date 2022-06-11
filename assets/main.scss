@@ -118,3 +118,7 @@ footer {
         text-decoration: underline;
     }
 }
+
+.highlight > pre {
+    overflow-x: auto;
+}
