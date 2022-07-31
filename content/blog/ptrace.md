@@ -167,7 +167,7 @@ fn run_tracer(child: Pid) {
 
     match ptrace::getregs(child) {
         Ok(x) => println!(
-            "Syscall number: {:?}",
+            "Syscall name: {:?}",
             system_call_names::SYSTEM_CALL_NAMES[(x.orig_rax) as usize]
         ),
         Err(x) => println!("{:?}", x),
@@ -206,7 +206,7 @@ $ cargo r
    Compiling ptrace v0.1.0 (/home/jakob/Documents/Projects/ptrace)
     Finished dev [unoptimized + debuginfo] target(s) in 0.38s
      Running `target/debug/ptrace`
-Syscall number: "execve"
+Syscall name: "execve"
 ```
 
 When executing the snippet, we observe that the first system call was `execve()`. This is not surprising at all. This system call is defined like this: "execve() executes the program referred to by pathname". This system call is actually responsible for executing the program itself.
@@ -247,7 +247,7 @@ fn run_tracer(child: Pid) {
 
         match ptrace::getregs(child) {
             Ok(x) => println!(
-                "Syscall number: {:?}",
+                "Syscall name: {:?}",
                 system_call_names::SYSTEM_CALL_NAMES[(x.orig_rax) as usize]
             ),
             Err(_) => break,
@@ -277,17 +277,17 @@ $ cargo r
    Compiling ptrace v0.1.0 (/home/jakob/Documents/Projects/ptrace)
     Finished dev [unoptimized + debuginfo] target(s) in 0.33s
      Running `target/debug/ptrace`
-Syscall number: "execve"
-Syscall number: "newfstatat"
-Syscall number: "newfstatat"
-Syscall number: "write"
+Syscall name: "execve"
+Syscall name: "newfstatat"
+Syscall name: "newfstatat"
+Syscall name: "write"
 Cargo.lock  Cargo.toml  src  target
-Syscall number: "write"
-Syscall number: "close"
-Syscall number: "close"
-Syscall number: "close"
-Syscall number: "close"
-Syscall number: "exit_group"
+Syscall name: "write"
+Syscall name: "close"
+Syscall name: "close"
+Syscall name: "close"
+Syscall name: "close"
+Syscall name: "exit_group"
 ```
 
 This output is shortened! Normally, it displays all the system calls involved in an execution of `ls`. 
@@ -319,7 +319,7 @@ fn run_tracer(child: Pid) {
 
         match ptrace::getregs(child) {
             Ok(x) => println!(
-                "Syscall number: {:?}",
+                "Syscall name: {:?}",
                 system_call_names::SYSTEM_CALL_NAMES[(x.orig_rax) as usize]
             ),
             Err(_) => break,
@@ -351,21 +351,21 @@ I also executed the binary directly this time, since I had to use `sudo` to get 
 
 ```bash
 $ sudo ./ptrace
-Syscall number: "poll"
-Syscall number: "restart_syscall"
-Syscall number: "restart_syscall"
-Syscall number: "clock_gettime"
-Syscall number: "clock_gettime"
-Syscall number: "recvmsg"
-Syscall number: "recvmsg"
-Syscall number: "write"
-Syscall number: "write"
-Syscall number: "write"
-Syscall number: "write"
-Syscall number: "write"
-Syscall number: "write"
-Syscall number: "clock_gettime"
-Syscall number: "clock_gettime"
+Syscall name: "poll"
+Syscall name: "restart_syscall"
+Syscall name: "restart_syscall"
+Syscall name: "clock_gettime"
+Syscall name: "clock_gettime"
+Syscall name: "recvmsg"
+Syscall name: "recvmsg"
+Syscall name: "write"
+Syscall name: "write"
+Syscall name: "write"
+Syscall name: "write"
+Syscall name: "write"
+Syscall name: "write"
+Syscall name: "clock_gettime"
+Syscall name: "clock_gettime"
 ```
 
 This output is shortened again but one can see what the bash script is doing just from looking at the output of this command. 
@@ -374,7 +374,7 @@ The power of strace!
 
 # Handling arguments of system calls
 
-Accessing the arguments `ptrace()` provides is fairly straightforward. We have already used the return value of `ptrace::getregs()` to access the `system call number` earlier. This return value is actually the so-called `user_regs_struct`. In the following snippet, I am printing the corresponding `user_regs_struct` for every system call:
+Accessing the arguments `ptrace()` provides is fairly straightforward. We have already used the return value of `ptrace::getregs()` to access the `system call name` earlier. This return value is actually the so-called `user_regs_struct`. In the following snippet, I am printing the corresponding `user_regs_struct` for every system call:
 
 ```Rust
 mod system_call_names;
