@@ -16,9 +16,9 @@ The ptrace **man page** provides a solid definition of the system call:
 
 > The ptrace() system call provides a means by which one process (the "tracer") may observe or control the execution of another process (the "tracee"), and examine and change the tracee's memory and registers. It is primarily used to implement breakpoint debugging and system call tracing.
 
-In other, simpler words: `ptrace()` allows to interact with a process to set **breakpoints** for building debuggers like e.g. `gdb` or to **trace system calls** as done in `strace`. Both of these approaches are utilizing `ptrace()` to interact with a process.
+In other, simpler words: `ptrace()` allows you to interact with a process to set **breakpoints** for building debuggers like e.g. `gdb` or to **trace system calls** as done in `strace`. Both of these approaches are utilizing `ptrace()` to interact with a process.
 
-A process can be traced by setting up the calling process (my strace implementation) to be the **parent process** of the process we want to trace (e.g. an execution of `ls`). `ptrace()` then allows to interact with the **child process**. When a certain event occurs, the child process is stopped using **SIGTRAP** until the parent process allows the child continue execution.
+A process can be traced by setting up the calling process (my strace implementation) to be the **parent process** of the process we want to trace (e.g. an execution of `ls`). `ptrace()` then allows to interact with the **child process**. When a certain event occurs, the child process is stopped using **SIGTRAP** until the parent process allows the child to continue execution.
 
 For our purposes, we are going to use the `nix` crate to be able to use `ptrace()` in Rust. The `nix` crate generally provides various \*nix system functions including `ptrace()`.
 
@@ -50,7 +50,7 @@ fn main() {
 }
 ```
 
-In the code snippet, I simply **fork** the calling process by calling the respective function. The `Parent` will be the calling process (tracer) and the `Child` will execute the command I want to trace (tracee). At this point, each the parent and the child just run an infinite loop.
+In the code snippet, I simply **fork** the calling process by calling the respective function. The `Parent` will be the calling process (tracer) and the `Child` will execute the command I want to trace (tracee). At this point, both the parent and the child just run an infinite loop.
 
 When using `top`, one can see that the process has been successfully forked: 
 
@@ -64,7 +64,7 @@ When using `top`, one can see that the process has been successfully forked:
    2164 jakob     20   0 6941696 363176 176248 S   6,6   1,1  12:31.55 gnome-shell     
 ```
 
-The first two processes in `top` are the processes resulting from the fork, both at 100% CPU usage. That's of course because both processes consist  of an inifinte loop. If you aren't using infinite loops inside the first code snippet, look for `ptrace` in the `COMMAND` column.
+The first two processes in `top` are the processes resulting from the fork, both at 100% CPU usage. That's of course because both processes consist  of an inifinte loop. If you aren't using infinite loops inside the first code snippet, look for the name of your cargo project (mine was `ptrace`) in the `COMMAND` column.
 
 Additionally, I can also use `strace` to trace the implementation to see that the fork worked:
 
@@ -186,7 +186,7 @@ fn run_tracee() {
 
 I will be using some of the functions Rust provides to interact with `ptrace()`. If you want to look at the original `ptrace()` specification to follow along, feel free to open up the relevant [man page](https://linux.die.net/man/2/ptrace).
 
-The `tracee()` has to confirm that it wants to be traced. This can be achieved by calling `ptrace::traceme().unwrap()`. If you are looking at the man page, search for `PTRACE_TRACEME`. Afterwards, we use `personality()` to disable **ASLR** (Address Space Layout Randomization). Then we execute `ls`.
+The `tracee()` has to confirm that it wants to be traced. This can be achieved by calling `ptrace::traceme().unwrap()`, which causes the child process to send a signal before and after each system call. If you are looking at the man page, search for `PTRACE_TRACEME`. Afterwards, we use `personality()` to disable **ASLR** (Address Space Layout Randomization). Then we execute `ls`.
 
 The `tracer()` waits for a syscall using `wait()`. This function uses `waitpid()` to wait for the child process to change state. Look at the corresponding [man page](https://linux.die.net/man/2/waitpid) for further details. As soon as we get notified, we call `getregs()` (`PTRACE_GETREGS`) to get information about the general purpose or floating point registers of the `tracee`. This struct includes the system call number, the arguments of the syscall and its return values. The **arguments** are stored in the following registers:
 
@@ -345,7 +345,7 @@ while :
     done
 ```
 
-`top` can then be used to identify the `PID` of the process to be traced. In my case I had to look for `gnome-terminal-` in the `COMMAND` column.
+`top` can then be used to identify the `PID` of the process to be traced. Look for the line with a `COMMAND` name that matches the name of your terminal process. In my case I had to look for `gnome-terminal-` in the `COMMAND` column.
 
 I also executed the binary directly this time, since I had to use `sudo` to get permissions to trace a running process:
 
@@ -374,7 +374,7 @@ The power of strace!
 
 # Handling arguments of system calls
 
-Accessing the arguments `ptrace()` provides is fairly straight forward. We have already used the return value of `ptrace::getregs()` to access the `system call number` earlier. This return value is actually the so-called `user_regs_struct`. In the following snippet, I am printing the corresponding `user_regs_struct` for every system call:
+Accessing the arguments `ptrace()` provides is fairly straightforward. We have already used the return value of `ptrace::getregs()` to access the `system call number` earlier. This return value is actually the so-called `user_regs_struct`. In the following snippet, I am printing the corresponding `user_regs_struct` for every system call:
 
 ```Rust
 mod system_call_names;
